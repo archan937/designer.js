@@ -26,18 +26,6 @@ module.exports = function(grunt) {
       }
     },
 
-    cssmin: {
-      target: {
-        files: [{
-          expand: true,
-          cwd: 'src/css',
-          src: ['**/*.css'],
-          dest: 'build/css',
-          ext: '.min.css'
-        }]
-      }
-    },
-
     uglify: {
       dist: {
         files: {
@@ -46,38 +34,67 @@ module.exports = function(grunt) {
       }
     },
 
+    sass: {
+      dist: {
+        options: {
+          style: 'compressed',
+          sourcemap: 'none'
+        },
+        files: [{
+          expand: true,
+          cwd: 'src/css',
+          src: ['**/*.sass'],
+          dest: 'build/css',
+          ext: '.min.css'
+        }]
+      }
+    },
+
+    htmlmin: {
+      dist: {
+        options: {
+          removeComments: true,
+          collapseWhitespace: true
+        },
+        files: {
+          'build/html/designer.min.html': 'src/html/designer.html'
+        }
+      }
+    },
+
     replace: {
       dist: {
         options: {
           patterns: [{
-          //   match: 'fooJS',
-          //   replacement: util.inspect(grunt.file.read('build/js/ext/foo.min.js'))
-          // }, {
-          //   match: 'designerCSS',
-          //   replacement: util.inspect(grunt.file.read('build/css/designer.min.css'))
+            match: 'designerCSS',
+            replacement: util.inspect(grunt.file.read('build/css/designer.min.css'))
+          }, {
+            match: 'designerHTML',
+            replacement: util.inspect(grunt.file.read('build/html/designer.min.html'))
           }]
         },
         files: [{
           expand: true,
           flatten: true,
           src: ['src/designer.js'],
-          dest: 'src/'
+          dest: 'src'
         }]
       }
     },
 
     watch: {
-      files: ['Gruntfile.js', 'src/js/**/*.js', 'src/css/**/*.css'],
-      tasks: ['concat', 'cssmin', 'uglify', 'replace']
+      files: ['Gruntfile.js', 'src/js/**/*.js', 'src/css/**/*.css', 'src/html/**/*.html'],
+      tasks: ['concat', 'uglify', 'sass', 'htmlmin', 'replace']
     }
 
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default', ['concat', 'cssmin', 'uglify', 'replace', 'watch']);
+  grunt.registerTask('default', ['concat', 'uglify', 'sass', 'htmlmin', 'replace', 'watch']);
 
 };

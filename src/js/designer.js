@@ -18,20 +18,23 @@ Designer = (function() {
   mod.extend(this, 'Events');
   mod.extend(this, 'Inject');
   mod.extend(this, 'Config');
+  mod.extend(this, 'Designer.Toolbar');
 
-  // mod.extend(this, 'Designer.Foo');
-
-  registerCSS(@@designerCSS);
-
-  injectCode();
+  registerCSS(@@designerCSS, 'ds-css');
+  registerHTML(@@designerHTML);
+  registerConfig(Toolbar.config);
 
   ready(function() {
+    injectCode();
     configure();
+    Toolbar.ready();
   });
 
   return {
     version: '{version}',
-    $: $
+    $: $,
+    show: Toolbar.show,
+    hide: Toolbar.hide
   }
 })();
 
