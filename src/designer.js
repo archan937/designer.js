@@ -612,8 +612,8 @@ Designer = (function() {
   mod.extend(this, 'Config');
   mod.extend(this, 'Designer.Toolbar');
 
-  registerCSS('#ds-toolbar{font-family:"Helvetica Neue","Helvetica","Arial","sans-serif";display:none;letter-spacing:-0.35px}\n', 'ds-css');
-  registerHTML('<div id="ds-toolbar">Toolbar</div>');
+  registerCSS('#ds-toolbar{bottom:10px;right:10px;position:fixed;display:none}#ds-toolbar *{margin:0;padding:0;list-style:none;outline:0}#ds-toolbar ul{padding:5px 0;color:#222;font-family:"Helvetica Neue","Helvetica","Arial","sans-serif";font-size:12px;font-weight:bold;letter-spacing:-0.35px;border:1px solid #777;background:#FDFDFD;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;box-shadow:rgba(0,0,0,0.5) 0 1px 2px;-moz-box-shadow:rgba(0,0,0,0.5) 0 1px 2px;-webkit-box-shadow:rgba(0,0,0,0.5) 0 1px 2px}#ds-toolbar ul li{padding:1px 17px;*padding:1px 17px;line-height:1;border-right:1px solid #BBB;display:-moz-inline-block;display:inline-block;zoom:1;*display:inline}#ds-toolbar ul li:first-child{cursor:move}#ds-toolbar ul li:last-child{border:0;*border:0}#ds-toolbar ul li a{color:#4183C4;text-decoration:none}#ds-toolbar ul li a:hover{text-decoration:underline}\n', 'ds-css');
+  registerHTML('<div id="ds-toolbar"><ul><li>Designer</li><li><a>H1</a></li></ul></div>');
   registerConfig(Toolbar.config);
 
   ready(function() {

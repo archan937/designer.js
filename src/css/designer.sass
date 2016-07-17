@@ -1,4 +1,45 @@
+@import mixins
+
 #ds-toolbar
-  font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif"
+  bottom: 10px
+  right: 10px
+  position: fixed
   display: none
-  letter-spacing: -0.35px
+
+  *
+    margin: 0
+    padding: 0
+    list-style: none
+    outline: 0
+
+  ul
+    padding: 5px 0
+    color: #222
+    font:
+      family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif"
+      size: 12px
+      weight: bold
+    letter-spacing: -0.35px
+    border: 1px solid #777
+    background: #FDFDFD
+    +border-radius(5px)
+    +box-shadow(rgba(0, 0, 0, 0.5), 0, 1px, 2px)
+
+    li
+      padding: 1px 17px
+      *padding: 1px 17px
+      line-height: 1
+      border-right: 1px solid #BBB
+      +inline-block
+
+      &:first-child
+        cursor: move
+      &:last-child
+        border: 0
+        *border: 0
+
+      a
+        color: #4183C4
+        text-decoration: none
+        &:hover
+          text-decoration: underline
