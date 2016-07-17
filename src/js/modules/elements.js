@@ -102,6 +102,19 @@ mod.define('Elements', function() {
         } else {
           this.style[key] = value;
         }
+      },
+
+      toShadowDom: function(id) {
+        var body = document.body, el = $('#' + id)[0];
+
+        if (!el) {
+          el = document.createElement('div');
+          el.id = id;
+          document.body.appendChild(el);
+          el.createShadowRoot();
+        }
+
+        el.shadowRoot.appendChild(this);
       }
     },
 
