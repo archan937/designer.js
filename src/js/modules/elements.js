@@ -136,6 +136,12 @@ mod.define('Elements', function() {
       }
     }
 
+    for (i = 0; i < found.length; i++) {
+      if (!found[i]) {
+        found.splice(i, 1);
+      }
+    }
+
     return found;
   },
 
@@ -186,9 +192,9 @@ mod.define('Elements', function() {
   };
 
   return {
-    $: function(arg) {
+    $: function(arg, context) {
       return wrap(
-        (typeof(arg) == 'string') ? search(arg) : arg
+        (typeof(arg) == 'string') ? search(arg, context) : arg
       );
     }
   };
