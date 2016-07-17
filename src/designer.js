@@ -594,7 +594,7 @@ if (typeof(Designer) == 'undefined') {
 
 // *
 // * designer.js {version} (Uncompressed)
-// * A minimalistic Javascript library to design a web pages using absolute positioning
+// * A minimalistic Javascript library to design web pages using absolute positioning
 // *
 // * (c) {year} Paul Engel
 // * designer.js is licensed under MIT license

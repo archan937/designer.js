@@ -1,6 +1,6 @@
 # Designer.js
 
-A minimalistic Javascript library to design a web pages using absolute positioning.
+A minimalistic Javascript library to design web pages using absolute positioning.
 
 ### Introduction
 

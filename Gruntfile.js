@@ -11,29 +11,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    concat: {
-      options: {
-        separator: '\n'
-      },
-      dist: {
-        src: [
-          'src/js/mod.js',
-          'src/js/modules/*.js',
-          'src/js/designer/*.js',
-          'src/js/designer.js'
-        ],
-        dest: 'src/designer.js'
-      }
-    },
-
-    uglify: {
-      dist: {
-        files: {
-          // 'build/js/ext/foo.min.js': ['src/js/ext/foo.js']
-        }
-      }
-    },
-
     sass: {
       dist: {
         options: {
@@ -62,15 +39,42 @@ module.exports = function(grunt) {
       }
     },
 
+    concat: {
+      options: {
+        separator: '\n'
+      },
+      dist: {
+        src: [
+          'src/js/mod.js',
+          'src/js/modules/*.js',
+          'src/js/designer/*.js',
+          'src/js/designer.js'
+        ],
+        dest: 'src/designer.js'
+      }
+    },
+
+    uglify: {
+      dist: {
+        files: {
+          // 'build/js/ext/foo.min.js': ['src/js/ext/foo.js']
+        }
+      }
+    },
+
     replace: {
       dist: {
         options: {
           patterns: [{
             match: 'designerCSS',
-            replacement: util.inspect(grunt.file.read('build/css/designer.min.css'))
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/css/designer.min.css'));
+            }
           }, {
             match: 'designerHTML',
-            replacement: util.inspect(grunt.file.read('build/html/designer.min.html'))
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/html/designer.min.html'));
+            }
           }]
         },
         files: [{
@@ -83,18 +87,18 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      files: ['Gruntfile.js', 'src/js/**/*.js', 'src/css/**/*.css', 'src/html/**/*.html'],
-      tasks: ['concat', 'uglify', 'sass', 'htmlmin', 'replace']
+      files: ['Gruntfile.js', 'src/css/**/*.sass', 'src/html/**/*.html', 'src/js/**/*.js'],
+      tasks: ['sass', 'htmlmin', 'concat', 'uglify', 'replace']
     }
 
   });
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default', ['concat', 'uglify', 'sass', 'htmlmin', 'replace', 'watch']);
+  grunt.registerTask('default', ['sass', 'htmlmin', 'concat', 'uglify', 'replace', 'watch']);
 
 };
