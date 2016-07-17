@@ -4,7 +4,7 @@ A minimalistic Javascript library to design web pages using absolute positioning
 
 ### Introduction
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Designer.js is a very small library with which you can add and **absolute** position page elements visually. Think of it as an **unobtrusive** Keynote-like page editor. Such as the [strut.io editor](http://strut.io/editor) or [Slides editor](https://slides.com/) but **only** having their core functionality which is designing the slide / page.
 
 ### Installation
 
