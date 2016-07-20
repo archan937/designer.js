@@ -65,6 +65,10 @@ mod.define('Introspect', function() {
 
     computed: function(el) {
       return window.getComputedStyle(el);
+    },
+
+    root: function(el) {
+      return el.parentNode ? root(el.parentNode) : el;
     }
   };
 });

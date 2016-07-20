@@ -30,10 +30,12 @@ mod.define('Events', function() {
       }
     },
 
-    on: function(sel, type, fn) {
-      bind(document, type, function(e) {
-        var target = closest(e.target || e.srcElement || window.event.target || window.event.srcElement, sel);
-        if (target) {
+    on: function(sel, type, fn, context) {
+      context || (context = document);
+
+      bind(context, type, function(e) {
+        var target = $(e.target || e.srcElement || window.event.target || window.event.srcElement).closest(sel);
+        if (target.length) {
           e.preventDefault ? e.preventDefault() : e.returnValue = false;
           fn(e, target);
         }

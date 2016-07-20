@@ -3,7 +3,13 @@ mod.define('Designer.Toolbar', function() {
 
   el = function() {
     var sel = '#ds-toolbar',
-        el = $(sel, document.body.shadowRoot);
+        shadow_dom = $('#ds-shadow-dom')[0],
+        el = [];
+
+    if (shadow_dom) {
+      el = $(sel, shadow_dom.shadowRoot);
+    }
+
     return el.length ? el : $(sel);
   },
 
@@ -13,6 +19,12 @@ mod.define('Designer.Toolbar', function() {
 
   hide = function() {
     el().hide();
+  },
+
+  bind = function() {
+    el().on('a', 'click', function(e, target) {
+      console.log(target[0].innerHTML);
+    });
   };
 
   return {
@@ -29,6 +41,7 @@ mod.define('Designer.Toolbar', function() {
         var id = 'ds-shadow-dom';
         $('#ds-css').toShadowDom(id);
         el().toShadowDom(id);
+        bind();
       }
 
     }

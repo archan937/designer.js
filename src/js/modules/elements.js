@@ -2,12 +2,14 @@ mod.define('Elements', function() {
   var
 
     fn = {
-      closest: function(sel, elements) {
-        elements || (elements = $(sel));
+      closest: function(sel, elements, context) {
+        context || (context = root(this));
+        elements || (elements = $(sel, context));
+
         if (indexOf(this, elements) != -1) {
           return this;
         } else {
-          return $(this.parentNode).closest(sel, elements);
+          return $(this.parentNode).closest(sel, elements, context);
         }
       },
 
@@ -78,7 +80,9 @@ mod.define('Elements', function() {
       },
 
       on: function() {
-        on.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
+        var args = Array.prototype.slice.call(arguments);
+        args[3] || (args[3] = root(this));
+        on.apply(window, args);
       },
 
       trigger: function() {
@@ -138,7 +142,7 @@ mod.define('Elements', function() {
         found = found.concat($(array.join(' '), parents[i]));
       }
     } else {
-      found = context[fn] ? context[fn](s) : $[fn](s, context);
+      found = context[fn] ? context[fn](s) : context.querySelectorAll(s);
       if (f == 'ById') {
         found = [found];
       } else {
@@ -159,7 +163,7 @@ mod.define('Elements', function() {
   },
 
   wrap = function(arg) {
-    if (typeof(arg) == 'undefined') {
+    if ((arg === null) || (typeof(arg) == 'undefined')) {
       return wrap([]);
     }
     if (!arg.at) {

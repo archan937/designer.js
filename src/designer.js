@@ -109,12 +109,14 @@ mod.define('Elements', function() {
   var
 
     fn = {
-      closest: function(sel, elements) {
-        elements || (elements = $(sel));
+      closest: function(sel, elements, context) {
+        context || (context = root(this));
+        elements || (elements = $(sel, context));
+
         if (indexOf(this, elements) != -1) {
           return this;
         } else {
-          return $(this.parentNode).closest(sel, elements);
+          return $(this.parentNode).closest(sel, elements, context);
         }
       },
 
@@ -185,7 +187,9 @@ mod.define('Elements', function() {
       },
 
       on: function() {
-        on.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
+        var args = Array.prototype.slice.call(arguments);
+        args[3] || (args[3] = root(this));
+        on.apply(window, args);
       },
 
       trigger: function() {
@@ -245,7 +249,7 @@ mod.define('Elements', function() {
         found = found.concat($(array.join(' '), parents[i]));
       }
     } else {
-      found = context[fn] ? context[fn](s) : $[fn](s, context);
+      found = context[fn] ? context[fn](s) : context.querySelectorAll(s);
       if (f == 'ById') {
         found = [found];
       } else {
@@ -266,7 +270,7 @@ mod.define('Elements', function() {
   },
 
   wrap = function(arg) {
-    if (typeof(arg) == 'undefined') {
+    if ((arg === null) || (typeof(arg) == 'undefined')) {
       return wrap([]);
     }
     if (!arg.at) {
@@ -352,10 +356,12 @@ mod.define('Events', function() {
       }
     },
 
-    on: function(sel, type, fn) {
-      bind(document, type, function(e) {
-        var target = closest(e.target || e.srcElement || window.event.target || window.event.srcElement, sel);
-        if (target) {
+    on: function(sel, type, fn, context) {
+      context || (context = document);
+
+      bind(context, type, function(e) {
+        var target = $(e.target || e.srcElement || window.event.target || window.event.srcElement).closest(sel);
+        if (target.length) {
           e.preventDefault ? e.preventDefault() : e.returnValue = false;
           fn(e, target);
         }
@@ -549,6 +555,10 @@ mod.define('Introspect', function() {
 
     computed: function(el) {
       return window.getComputedStyle(el);
+    },
+
+    root: function(el) {
+      return el.parentNode ? root(el.parentNode) : el;
     }
   };
 });
@@ -558,7 +568,13 @@ mod.define('Designer.Toolbar', function() {
 
   el = function() {
     var sel = '#ds-toolbar',
-        el = $(sel, document.body.shadowRoot);
+        shadow_dom = $('#ds-shadow-dom')[0],
+        el = [];
+
+    if (shadow_dom) {
+      el = $(sel, shadow_dom.shadowRoot);
+    }
+
     return el.length ? el : $(sel);
   },
 
@@ -568,6 +584,12 @@ mod.define('Designer.Toolbar', function() {
 
   hide = function() {
     el().hide();
+  },
+
+  bind = function() {
+    el().on('a', 'click', function(e, target) {
+      console.log(target[0].innerHTML);
+    });
   };
 
   return {
@@ -584,6 +606,7 @@ mod.define('Designer.Toolbar', function() {
         var id = 'ds-shadow-dom';
         $('#ds-css').toShadowDom(id);
         el().toShadowDom(id);
+        bind();
       }
 
     }
@@ -612,8 +635,8 @@ Designer = (function() {
   mod.extend(this, 'Config');
   mod.extend(this, 'Designer.Toolbar');
 
-  registerCSS('#ds-toolbar{bottom:10px;right:10px;position:fixed;display:none}#ds-toolbar *{margin:0;padding:0;list-style:none;outline:0}#ds-toolbar ul{padding:5px 0;color:#222;font-family:"Helvetica Neue","Helvetica","Arial","sans-serif";font-size:12px;font-weight:bold;letter-spacing:-0.35px;border:1px solid #777;background:#FDFDFD;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;box-shadow:rgba(0,0,0,0.5) 0 1px 2px;-moz-box-shadow:rgba(0,0,0,0.5) 0 1px 2px;-webkit-box-shadow:rgba(0,0,0,0.5) 0 1px 2px}#ds-toolbar ul li{padding:1px 17px;*padding:1px 17px;line-height:1;border-right:1px solid #BBB;display:-moz-inline-block;display:inline-block;zoom:1;*display:inline}#ds-toolbar ul li:first-child{cursor:move}#ds-toolbar ul li:last-child{border:0;*border:0}#ds-toolbar ul li a{color:#4183C4;text-decoration:none}#ds-toolbar ul li a:hover{text-decoration:underline}\n', 'ds-css');
-  registerHTML('<div id="ds-toolbar"><ul><li>Designer</li><li><a>H1</a></li></ul></div>');
+  registerCSS('#ds-toolbar{top:15px;right:15px;position:fixed;display:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}#ds-toolbar *{margin:0;padding:0;list-style:none;outline:0}#ds-toolbar ul{padding:5px 0;color:#222;font-family:"Helvetica Neue","Helvetica","Arial","sans-serif";font-size:12px;font-weight:bold;letter-spacing:-0.35px;border:1px solid #777;background:#FDFDFD;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;box-shadow:rgba(0,0,0,0.5) 0 1px 2px;-moz-box-shadow:rgba(0,0,0,0.5) 0 1px 2px;-webkit-box-shadow:rgba(0,0,0,0.5) 0 1px 2px}#ds-toolbar ul li{padding:1px 10px;*padding:1px 10px;line-height:1;border-right:1px solid #BBB;display:-moz-inline-block;display:inline-block;zoom:1;*display:inline}#ds-toolbar ul li:first-child{padding:1px 18px;*padding:1px 18px;cursor:default}#ds-toolbar ul li:last-child{border:0;*border:0}#ds-toolbar ul li a{color:#4183C4;text-decoration:none}#ds-toolbar ul li a:hover{cursor:pointer;text-decoration:underline}\n', 'ds-css');
+  registerHTML('<div id="ds-toolbar"><ul><li>Designer</li><li><a>Text</a></li><li><a>Image</a></li><li><a>Background</a></li></ul></div>');
   registerConfig(Toolbar.config);
 
   ready(function() {
