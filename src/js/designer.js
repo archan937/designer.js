@@ -10,15 +10,7 @@ if (typeof(Designer) == 'undefined') {
 // * $Date: {date} $
 // *
 
-Designer = (function() {
-
-  mod.extend(this, 'Introspect');
-  mod.extend(this, 'Collections');
-  mod.extend(this, 'Elements');
-  mod.extend(this, 'Events');
-  mod.extend(this, 'Inject');
-  mod.extend(this, 'Config');
-  mod.extend(this, 'Designer.Toolbar');
+Designer = define(function() {
 
   registerCSS(@@designerCSS, 'ds-css');
   registerHTML(@@designerHTML);
@@ -36,6 +28,14 @@ Designer = (function() {
     show: Toolbar.show,
     hide: Toolbar.hide
   }
-})();
+
+},
+  'Introspect',
+  'Collections',
+  'Events',
+  'Inject',
+  'Config',
+  'Designer.Toolbar'
+);
 
 }
