@@ -30,7 +30,8 @@ mod.define('Inject', function() {
       for (i = 0; i < registered.js.length; i++) {
         val = registered.js[i];
         el = document.createElement('script');
-        el.id = val[1];
+        if (val[1])
+          el.id = val[1];
         el.innerHTML = val[0];
         head.insertBefore(el, head.childNodes[0]);
       }
@@ -38,7 +39,8 @@ mod.define('Inject', function() {
       for (i = 0; i < registered.css.length; i++) {
         val = registered.css[i];
         el = document.createElement('style');
-        el.id = val[1];
+        if (val[1])
+          el.id = val[1];
         el.innerHTML = val[0];
         head.insertBefore(el, head.childNodes[0]);
       }

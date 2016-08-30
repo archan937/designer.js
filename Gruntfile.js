@@ -34,7 +34,7 @@ module.exports = function(grunt) {
           collapseWhitespace: true
         },
         files: {
-          'build/html/designer.min.html': 'src/html/designer.html'
+          'build/html/toolbar.min.html': 'src/html/toolbar.html'
         }
       }
     },
@@ -66,14 +66,19 @@ module.exports = function(grunt) {
       dist: {
         options: {
           patterns: [{
-            match: 'designerCSS',
+            match: 'toolbarCSS',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/css/designer.min.css'));
+              return util.inspect(grunt.file.read('build/css/toolbar.min.css'));
             }
           }, {
-            match: 'designerHTML',
+            match: 'elementsCSS',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/html/designer.min.html'));
+              return util.inspect(grunt.file.read('build/css/elements.min.css'));
+            }
+          }, {
+            match: 'toolbarHTML',
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/html/toolbar.min.html'));
             }
           }]
         },

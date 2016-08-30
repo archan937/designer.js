@@ -12,13 +12,16 @@ if (typeof(Designer) == 'undefined') {
 
 Designer = define(function() {
 
-  registerCSS(@@designerCSS, 'ds-css');
-  registerHTML(@@designerHTML);
+  registerCSS(@@toolbarCSS, 'ds-css-toolbar');
+  registerCSS(@@elementsCSS, 'ds-css-elements');
+  registerHTML(@@toolbarHTML);
   registerConfig(Toolbar.config);
 
   ready(function() {
     injectCode();
     configure();
+    Draggable.ready();
+    Elements.ready();
     Toolbar.ready();
   });
 
@@ -30,12 +33,16 @@ Designer = define(function() {
   }
 
 },
+  'Utils',
   'Introspect',
   'Collections',
+  'Elements',
   'Events',
+  'Draggable',
   'Inject',
   'Config',
-  'Designer.Toolbar'
+  'Designer.Toolbar',
+  'Designer.Elements'
 );
 
 }

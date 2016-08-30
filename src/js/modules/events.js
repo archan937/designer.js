@@ -1,6 +1,10 @@
 mod.define('Events', function() {
   return {
-    bind: function(el, type, fn, remove) {
+    bind: function(el, type, f, remove) {
+      fn = function(e) {
+        f(e, e.target || e.srcElement || window.event.target || window.event.srcElement);
+      };
+
       var tf = type + fn;
 
       if (el && (el.attachEvent ? (remove ? el.detachEvent('on' + type, el[tf]) : 1) : (remove ? el.removeEventListener(type, fn, 0) : el.addEventListener(type, fn, 0)))) {
@@ -33,10 +37,9 @@ mod.define('Events', function() {
     on: function(sel, type, fn, context) {
       context || (context = document);
 
-      bind(context, type, function(e) {
-        var target = $(e.target || e.srcElement || window.event.target || window.event.srcElement).closest(sel);
+      bind(context, type, function(e, target) {
+        target = $(target).closest(sel);
         if (target.length) {
-          e.preventDefault ? e.preventDefault() : e.returnValue = false;
           fn(e, target);
         }
       });

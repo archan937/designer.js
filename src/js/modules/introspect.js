@@ -37,6 +37,14 @@ mod.define('Introspect', function() {
       return parent !== window;
     },
 
+    pageWidth: function() {
+      return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    },
+
+    pageHeight: function() {
+      return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    },
+
     viewWidth: function() {
       return Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     },
@@ -54,13 +62,18 @@ mod.define('Introspect', function() {
     },
 
     bounds: function(el) {
-      var rect = el.getBoundingClientRect();
-      return {
-        top: parseInt(rect.top + viewTop()),
-        left: parseInt(rect.left + viewLeft()),
-        width: parseInt(rect.width),
-        height: parseInt(rect.height)
-      }
+      var rect = el.getBoundingClientRect(),
+          bounds = {
+            top: parseInt(rect.top + viewTop()),
+            left: parseInt(rect.left + viewLeft()),
+            width: parseInt(rect.width),
+            height: parseInt(rect.height)
+          };
+
+      bounds.bottom = pageHeight() - bounds.top - bounds.height;
+      bounds.right = pageWidth() - bounds.left - bounds.width;
+
+      return bounds;
     },
 
     computed: function(el) {

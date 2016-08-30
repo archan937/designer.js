@@ -1,16 +1,21 @@
 mod.define('Designer.Toolbar', function() {
   var
 
+  id_shadow_dom = 'ds-shadow-dom',
+  id_toolbar = 'ds-toolbar',
+
+  sel_shadow_dom = '#' + id_shadow_dom,
+  sel_toolbar = '#' + id_toolbar,
+
   el = function() {
-    var sel = '#ds-toolbar',
-        shadow_dom = $('#ds-shadow-dom')[0],
+    var shadow_dom = $(sel_shadow_dom)[0],
         el = [];
 
     if (shadow_dom) {
-      el = $(sel, shadow_dom.shadowRoot);
+      el = $(sel_toolbar, shadow_dom.shadowRoot);
     }
 
-    return el.length ? el : $(sel);
+    return el.length ? el : $(sel_toolbar);
   },
 
   show = function() {
@@ -23,7 +28,15 @@ mod.define('Designer.Toolbar', function() {
 
   bind = function() {
     el().on('a', 'click', function(e, target) {
-      console.log(target[0].innerHTML);
+      var type = $(target).html().toLowerCase();
+      switch (type) {
+        case 'text': case 'image':
+          Elements.addElement(type);
+          break;
+        case 'background':
+          Elements.editBackground();
+          break;
+      }
     });
   };
 
@@ -38,9 +51,8 @@ mod.define('Designer.Toolbar', function() {
       hide: hide,
 
       ready: function() {
-        var id = 'ds-shadow-dom';
-        $('#ds-css').toShadowDom(id);
-        el().toShadowDom(id);
+        $('#ds-css-toolbar').toShadowDom(id_shadow_dom);
+        el().toShadowDom(id_shadow_dom);
         bind();
       }
 

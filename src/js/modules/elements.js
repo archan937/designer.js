@@ -2,6 +2,26 @@ mod.define('Elements', function() {
   var
 
     fn = {
+      find: function(selector) {
+        return $(selector, this);
+      },
+
+      children: function() {
+        var children = [];
+        children.at = true;
+        for (var i = 0; i < this.childNodes.length; i++) {
+          node = this.childNodes[i];
+          if (node instanceof HTMLElement) {
+            children.push(node);
+          }
+        }
+        return children;
+      },
+
+      parent: function() {
+        return this.parentNode;
+      },
+
       closest: function(sel, elements, context) {
         context || (context = root(this));
         elements || (elements = $(sel, context));
@@ -19,6 +39,34 @@ mod.define('Elements', function() {
 
       hide: function() {
         this.style.display = 'none';
+      },
+
+      remove: function() {
+        this.parentNode.removeChild(this);
+      },
+
+      is: function(sel) {
+        return indexOf(this, $(sel)) != -1;
+      },
+
+      html: function(val) {
+        if (arguments.length) {
+          this.innerHTML = val;
+        } else {
+          return this.innerHTML;
+        }
+      },
+
+      root: function() {
+        return root(this);
+      },
+
+      edit: function(edit) {
+        if (edit == false) {
+          this.removeAttribute('contenteditable');
+        } else {
+          this.setAttribute('contenteditable', 'true');
+        }
       },
 
       addClass: function(arg) {
@@ -71,6 +119,10 @@ mod.define('Elements', function() {
         return outerEl;
       },
 
+      focus: function() {
+        this.focus();
+      },
+
       bind: function() {
         bind.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
       },
@@ -89,8 +141,49 @@ mod.define('Elements', function() {
         trigger.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
       },
 
+      width: function() {
+        var c = computed(this);
+        return parseInt(c.width) +
+               parseInt(c.borderLeftWidth) +
+               parseInt(c.paddingLeft) +
+               parseInt(c.borderRightWidth) +
+               parseInt(c.paddingRight);
+      },
+
+      height: function() {
+        var c = computed(this);
+        return parseInt(c.height) +
+               parseInt(c.borderTopWidth) +
+               parseInt(c.paddingTop) +
+               parseInt(c.borderBottomWidth) +
+               parseInt(c.paddingBottom);
+      },
+
       bounds: function() {
         return bounds.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
+      },
+
+      style: function() {
+        return this.style;
+      },
+
+      attr: function() {
+        var key = arguments[0], value = arguments[1], attr;
+        if (arguments.length == 1) {
+          if (typeof(key) == 'string') {
+            return this.getAttribute(key);
+          } else {
+            for (attr in key) {
+              this.setAttribute(attr, key[attr]);
+            }
+          }
+        } else {
+          this.setAttribute(key, value);
+        }
+      },
+
+      removeAttr: function(attr) {
+        this.removeAttribute(attr);
       },
 
       css: function() {
@@ -108,19 +201,43 @@ mod.define('Elements', function() {
         }
       },
 
+      appendTo: function(parent) {
+        $(parent).each(function(i, node) {
+          node.appendChild(this);
+        }.bind(this));
+      },
+
+      append: function(child) {
+        $(child).each(function(i, node) {
+          this.appendChild(node);
+        }.bind(this));
+      },
+
       toShadowDom: function(id) {
-        var body = document.body, el = $('#' + id)[0];
-
-        if (!el) {
-          el = document.createElement('div');
-          el.id = id;
-          document.body.appendChild(el);
-          el.createShadowRoot();
+        if (document.body.createShadowRoot) {
+          var body = document.body, el = $('#' + id)[0];
+          if (!el) {
+            el = document.createElement('div');
+            el.id = id;
+            document.body.appendChild(el);
+            el.createShadowRoot();
+          }
+          el.shadowRoot.appendChild(this);
         }
+      },
 
-        el.shadowRoot.appendChild(this);
+      draggable: function(arg) {
+        Draggable[(arg == false) ? 'stop' : 'init'](this, arg);
       }
     },
+
+  newElement = function(html) {
+    if ((typeof(html) == 'string') && html.match(/^\<(\w+).+\<\/\1\>$/)) {
+      var el = document.createElement('div');
+      el.innerHTML = html;
+      return wrap(el.childNodes[0]);
+    }
+  },
 
   search = function(sel, context) {
     context || (context = document);
@@ -178,6 +295,12 @@ mod.define('Elements', function() {
       arg.at = function(i) {
         return this[i];
       };
+      arg.each = function(f) {
+        for (var i = 0; i < this.length; i++) {
+          f.apply(this[i], [i, this[i]]);
+        }
+        return this;
+      };
     }
     return arg;
   },
@@ -197,8 +320,10 @@ mod.define('Elements', function() {
           result = el;
         }
 
-        if (result.nodeType) {
+        if (result && result.nodeType) {
           results.push(result);
+        } else if (result && result.at) {
+          results = results.concat(result);
         } else {
           return result;
         }
@@ -210,7 +335,7 @@ mod.define('Elements', function() {
 
   return {
     $: function(arg, context) {
-      return wrap(
+      return newElement(arg) || wrap(
         (typeof(arg) == 'string') ? search(arg, context) : arg
       );
     }
