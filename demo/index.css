@@ -6,7 +6,3 @@ body {
   font-family: "Lucida Grande";
   font-size: 13px;
 }
-
-#ds-toolbar {
-  background: red; /* should not have effect */
-}
