@@ -1,16 +1,16 @@
 mod.define('Designer.Elements', function() {
   var
 
-  class_el = 'ds-el',
-  class_selected = 'ds-selected',
-  class_transparent = 'ds-transparent',
-  class_wrapper = 'ds-el-wrapper',
+  elClass = 'ds-el',
+  selectedClass = 'ds-selected',
+  transparentClass = 'ds-transparent',
+  wrapperClass = 'ds-el-wrapper',
 
-  attr_empty = 'ds-empty',
+  emptyAttribute = 'ds-empty',
 
-  sel_el = '.' + class_el,
-  sel_selected = '.' + class_selected,
-  sel_wrapper = '.' + class_wrapper,
+  elSelector = '.' + elClass,
+  selectedSelector = '.' + selectedClass,
+  wrapperSelector = '.' + wrapperClass,
 
   cssFor = function(type) {
     return {
@@ -28,11 +28,11 @@ mod.define('Designer.Elements', function() {
   },
 
   addElement = function(type) {
-    $(sel_selected).removeClass(class_selected);
+    $(selectedSelector).removeClass(selectedClass);
 
     var
       text = (type == 'text' ? 'text' : ''),
-      el = $('<div class="' + class_el + ' ds-el-' + type + ' ' + class_transparent + '">' + text + '</div>'),
+      el = $('<div class="' + elClass + ' ds-el-' + type + ' ' + transparentClass + '">' + text + '</div>'),
       css = cssFor(type);
 
     el.
@@ -41,45 +41,143 @@ mod.define('Designer.Elements', function() {
       appendTo('body').
       css({
         top: ((50 - (vh(el.height()) / 2)) * (viewHeight() / viewWidth())) + 'vw',
-        // top: (50 - (vh(el.height()) / 2)) + 'vh',
         left: (50 - (vw(el.width()) / 2)) + 'vw',
       }).
       draggable({
-        stop: function(e, target) {
-          vwPosition(target);
-          selectElement($(target));
+        stop: function(e, el) {
+          vwPosition(el);
+          if (!el.hasClass(selectedClass)) {
+            selectElement(el);
+          }
         }
       });
 
-    setTimeout(function() { el.addClass(class_selected).removeClass(class_transparent); }, 50);
+    setTimeout(function() { selectElement(el.removeClass(transparentClass)); }, 50);
   },
 
   selectElement = function(el) {
-    var selected = $(sel_selected);
+    deselectElement();
+    if (el.is(elSelector)) {
+      el.addClass(selectedClass);
+      resizable(el);
+    }
+  },
 
-    selected.removeClass(class_selected).each(function() {
-      var element = $(this);
+  deselectElement = function() {
+    var selected = $(selectedSelector);
+
+    $('.ds-resize-handle').draggable(false).remove();
+
+    selected.removeClass(selectedClass).each(function() {
+      var element = $(this), html = element.html();
 
       if (element.attr('contenteditable')) {
         element.edit(false);
-        if (element.html().length) {
-          element.removeAttr(attr_empty);
+        if (html.length) {
+          element.removeAttr(emptyAttribute);
         } else {
-          element.attr(attr_empty, true).html('text');
+          element.attr(emptyAttribute, true).html('text');
         }
-        if (element.html() != element.attr('data-text')) {
+        if (html != element.attr('data-text')) {
           vwPosition(element);
         }
       }
     });
 
-    $(sel_wrapper).each(function() {
+    $(wrapperSelector).each(function() {
       $(this).children().appendTo('body');
     }).remove();
+  },
 
-    if (el.is(sel_el)) {
-      el.addClass(class_selected);
-    }
+  resizable = function(el) {
+    if (el.find('.ds-resize-handle').length)
+      return;
+
+    var
+      options = {
+        constraintX: function(el) {
+          return el.hasClass('ds-resize-tm') || el.hasClass('ds-resize-bm');
+        },
+        constraintY: function(el) {
+          return el.hasClass('ds-resize-cl') || el.hasClass('ds-resize-cr');
+        },
+        start: function(e, el) {
+          var
+            draggable = el.parent(),
+            bounds = draggable.bounds();
+          draggable.css({
+            width: '',
+            height: '',
+            bottom: bounds.bottom + 'px',
+            right: bounds.right + 'px'
+          });
+        },
+        move: function(e, el, position) {
+          var
+            draggable = el.parent(),
+            bounds = draggable.bounds();
+
+          if (el.hasClass('ds-resize-tl') || el.hasClass('ds-resize-tm') || el.hasClass('ds-resize-cl')) {
+            if (position.top) draggable.css({top: (bounds.top + parseInt(position.top)) + 'px'});
+            if (position.left) draggable.css({left: (bounds.left + parseInt(position.left)) + 'px'});
+          }
+
+          if (el.hasClass('ds-resize-bm') || el.hasClass('ds-resize-br') || el.hasClass('ds-resize-cr')) {
+            if (position.top) draggable.css({bottom: (bounds.bottom - (parseInt(position.top) - bounds.height)) + 'px'});
+            if (position.left) draggable.css({right: (bounds.right - (parseInt(position.left) - bounds.width)) + 'px'});
+          }
+
+          if (el.hasClass('ds-resize-tr')) {
+            draggable.css({
+              top: (bounds.top + parseInt(position.top)) + 'px',
+              right: (bounds.right - (parseInt(position.left) - bounds.width)) + 'px'
+            });
+          }
+
+          if (el.hasClass('ds-resize-bl')) {
+            draggable.css({
+              bottom: (bounds.bottom - (parseInt(position.top) - bounds.height)) + 'px',
+              left: (bounds.left + parseInt(position.left)) + 'px'
+            });
+          }
+
+          delete position.top;
+          delete position.left;
+        },
+        stop: function(e, el) {
+          var
+            draggable = el.parent(),
+            bounds = draggable.bounds(),
+            style = draggable.computedStyle();
+          draggable.css({
+            width: vw(
+              bounds.width -
+              parseInt(style.paddingLeft) -
+              parseInt(style.paddingRight) -
+              parseInt(style.borderLeft) -
+              parseInt(style.borderRight)
+            ) + 'vw',
+            height: vh(
+              bounds.height -
+              parseInt(style.paddingTop) -
+              parseInt(style.paddingBottom) -
+              parseInt(style.borderTop) -
+              parseInt(style.borderBottom)
+            ) + 'vh',
+            bottom: '',
+            right: ''
+          });
+        }
+      };
+
+    $('<div class="ds-resize-handle ds-resize-tl"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-tm"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-tr"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-cl"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-cr"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-bl"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-bm"></div>').draggable(options).appendTo(el);
+    $('<div class="ds-resize-handle ds-resize-br"></div>').draggable(options).appendTo(el);
   },
 
   editElement = function(el) {
@@ -100,20 +198,25 @@ mod.define('Designer.Elements', function() {
       orientation = (bounds.left <= bounds.right ? 'left' : 'right'),
       css = {
         top: bounds.top + 'px',
-        width: ((bounds[orientation] + (bounds.width / 2)) * 2) + 'px'
+        width: (
+          ((bounds[orientation] + (bounds.width / 2)) * 2) +
+          parseInt(el.computedStyle()['border-' + orientation + '-width'])
+        ) + 'px'
       },
       range,
       selection;
 
     css[orientation] = 0;
 
-    $('<div class="' + class_wrapper + '"></div>').
-      css(css).
-      appendTo('body').
-      append(el);
+    if (!el.style().width) {
+      $('<div class="' + wrapperClass + '"></div>').
+        css(css).
+        appendTo('body').
+        append(el);
+    }
 
-    el.attr('data-text', el.html());
-    if (el.attr(attr_empty)) {
+    el.attr('data-text', (el.at(0).text || '').trim());
+    if (el.attr(emptyAttribute)) {
       el.html('');
     }
     el.edit();
@@ -146,7 +249,7 @@ mod.define('Designer.Elements', function() {
         return;
       }
       target = $(target);
-      if (target.is(sel_selected)) {
+      if (target.is(selectedSelector)) {
         editElement(target);
       } else {
         selectElement(target);
@@ -158,9 +261,14 @@ mod.define('Designer.Elements', function() {
         return;
       }
       target = $(target);
-      if (target.is(sel_el)) {
+      if (target.is(elSelector)) {
         editElement(target);
       }
+    });
+
+    $('body').bind('keyup', function(e, target) {
+      if (e.keyCode == 27)
+        selectElement($('[contenteditable]'));
     });
   };
 
@@ -168,6 +276,7 @@ mod.define('Designer.Elements', function() {
     Elements: {
 
       addElement: addElement,
+      deselectElement: deselectElement,
       editBackground: editBackground,
 
       ready: function() {

@@ -12,6 +12,8 @@ if (typeof(Designer) == 'undefined') {
 
 Designer = define(function() {
 
+  registerJS(@@beautifyHtmlJS);
+  registerCSS(@@fontAwesomeCSS, 'ds-css-fontawesome');
   registerCSS(@@toolbarCSS, 'ds-css-toolbar');
   registerCSS(@@elementsCSS, 'ds-css-elements');
   registerHTML(@@toolbarHTML);
@@ -30,7 +32,7 @@ Designer = define(function() {
     $: $,
     show: Toolbar.show,
     hide: Toolbar.hide
-  }
+  };
 
 },
   'Utils',

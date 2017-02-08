@@ -1,21 +1,21 @@
 mod.define('Designer.Toolbar', function() {
   var
 
-  id_shadow_dom = 'ds-shadow-dom',
-  id_toolbar = 'ds-toolbar',
+  shadowDomId = 'ds-shadow-dom',
+  toolbarId = 'ds-toolbar',
 
-  sel_shadow_dom = '#' + id_shadow_dom,
-  sel_toolbar = '#' + id_toolbar,
+  shadowDomSelector = '#' + shadowDomId,
+  toolbarSelector = '#' + toolbarId,
 
   el = function() {
-    var shadow_dom = $(sel_shadow_dom)[0],
+    var shadowDom = $(shadowDomSelector)[0],
         el = [];
 
-    if (shadow_dom) {
-      el = $(sel_toolbar, shadow_dom.shadowRoot);
+    if (shadowDom) {
+      el = $(toolbarSelector, shadowDom.shadowRoot);
     }
 
-    return el.length ? el : $(sel_toolbar);
+    return el.length ? el : $(toolbarSelector);
   },
 
   show = function() {
@@ -28,7 +28,10 @@ mod.define('Designer.Toolbar', function() {
 
   bind = function() {
     el().on('a', 'click', function(e, target) {
-      var type = $(target).html().toLowerCase();
+      var
+        li = $(target).closest('li'),
+        type = li.attr('data-type').toLowerCase();
+
       switch (type) {
         case 'text': case 'image':
           Elements.addElement(type);
@@ -36,6 +39,25 @@ mod.define('Designer.Toolbar', function() {
         case 'background':
           Elements.editBackground();
           break;
+        case 'back':
+          $('.ds-selected').backward('.ds-el');
+          e.stopPropagation();
+          break;
+        case 'front':
+          $('.ds-selected').forward('.ds-el');
+          e.stopPropagation();
+          break;
+        case 'code':
+          Elements.deselectElement();
+          html = $('<div>' + $('body').html() + '</div>');
+          // html.find('#ds-shadow-dom').remove();
+          // html.find('.ds-*').css({background: 'red'});
+          // alert(html.html());
+          break;
+      }
+
+      if (li.hasClass('move')) {
+        // move toolbar
       }
     });
   };
@@ -51,8 +73,9 @@ mod.define('Designer.Toolbar', function() {
       hide: hide,
 
       ready: function() {
-        $('#ds-css-toolbar').toShadowDom(id_shadow_dom);
-        el().toShadowDom(id_shadow_dom);
+        $('#ds-css-fontawesome').toShadowDom(shadowDomId);
+        $('#ds-css-toolbar').toShadowDom(shadowDomId);
+        el().toShadowDom(shadowDomId);
         bind();
       }
 

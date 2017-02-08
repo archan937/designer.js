@@ -1,0 +1,87 @@
+@import ../mixins
+
+html
+  height: 100%
+
+body
+  min-height: 100%
+
+*[contenteditable]:empty
+  width: 2px
+  display: block
+
+*[contenteditable]
+  -webkit-user-select: auto !important
+  display: inline-block
+
+  .ds-resize-handle
+    display: none
+
+.ds-el
+  padding: 3px 5px
+  cursor: default
+  display: inline-block
+  position: absolute
+  outline: none
+  border: 1px solid transparent
+  +disable-text-selection
+
+  &.ds-selected
+    padding: 3px 5px
+    border-color: #4183C4
+
+    .ds-resize-tl
+      +resize-handle
+      +resize-handle-top
+      +resize-handle-left
+
+    .ds-resize-tm
+      +resize-handle
+      +resize-handle-top
+      +resize-handle-middle
+
+    .ds-resize-tr
+      +resize-handle
+      +resize-handle-top
+      +resize-handle-right
+
+    .ds-resize-cl
+      +resize-handle
+      +resize-handle-center
+      +resize-handle-left
+
+    .ds-resize-cr
+      +resize-handle
+      +resize-handle-center
+      +resize-handle-right
+
+    .ds-resize-bl
+      +resize-handle
+      +resize-handle-bottom
+      +resize-handle-left
+
+    .ds-resize-bm
+      +resize-handle
+      +resize-handle-bottom
+      +resize-handle-middle
+
+    .ds-resize-br
+      +resize-handle
+      +resize-handle-bottom
+      +resize-handle-right
+
+  &.ds-transparent
+    opacity: 0
+
+  &.ds-el-image
+    &.ds-selected
+      cursor: pointer
+
+.ds-el-wrapper
+  width: 100%
+  position: absolute
+  text-align: center
+
+  .ds-el
+    display: inline-block
+    position: static

@@ -11,6 +11,17 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    copy: {
+      main: {
+        files: [{
+          expand: true,
+          cwd: 'src/fonts/ext',
+          src: ['**'],
+          dest: 'build/js/fonts'
+        }],
+      },
+    },
+
     sass: {
       dist: {
         options: {
@@ -27,6 +38,18 @@ module.exports = function(grunt) {
       }
     },
 
+    cssmin: {
+      target: {
+        files: [{
+          expand: true,
+          cwd: 'src/css',
+          src: ['**/*.css'],
+          dest: 'build/css',
+          ext: '.min.css'
+        }]
+      }
+    },
+
     htmlmin: {
       dist: {
         options: {
@@ -34,7 +57,7 @@ module.exports = function(grunt) {
           collapseWhitespace: true
         },
         files: {
-          'build/html/toolbar.min.html': 'src/html/toolbar.html'
+          'build/html/designer/toolbar.min.html': 'src/html/designer/toolbar.html'
         }
       }
     },
@@ -50,60 +73,72 @@ module.exports = function(grunt) {
           'src/js/designer/*.js',
           'src/js/designer.js'
         ],
-        dest: 'src/designer.js'
+        dest: 'build/js/designer.js'
       }
     },
 
     uglify: {
       dist: {
         files: {
-          // 'build/js/ext/foo.min.js': ['src/js/ext/foo.js']
+          'build/js/ext/beautify-html.min.js': ['src/js/ext/beautify-html.js']
         }
       }
     },
 
     replace: {
       dist: {
+        files: [{
+          expand: true,
+          flatten: true,
+          src: ['build/js/designer.js'],
+          dest: 'build/js'
+        }],
         options: {
           patterns: [{
-            match: 'toolbarCSS',
+            match: 'beautifyHtmlJS',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/css/toolbar.min.css'));
+              return util.inspect(grunt.file.read('build/js/ext/beautify-html.min.js'));
+            }
+          }, {
+            match: 'fontAwesomeCSS',
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/css/ext/font-awesome.min.css'));
             }
           }, {
             match: 'elementsCSS',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/css/elements.min.css'));
+              return util.inspect(grunt.file.read('build/css/designer/elements.min.css'));
+            }
+          }, {
+            match: 'toolbarCSS',
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/css/designer/toolbar.min.css'));
             }
           }, {
             match: 'toolbarHTML',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/html/toolbar.min.html'));
+              return util.inspect(grunt.file.read('build/html/designer/toolbar.min.html'));
             }
           }]
-        },
-        files: [{
-          expand: true,
-          flatten: true,
-          src: ['src/designer.js'],
-          dest: 'src'
-        }]
+        }
       }
     },
 
     watch: {
-      files: ['Gruntfile.js', 'src/css/**/*.sass', 'src/html/**/*.html', 'src/js/**/*.js'],
-      tasks: ['sass', 'htmlmin', 'concat', 'uglify', 'replace']
+      files: ['Gruntfile.js', 'src/js/**/*.js', 'src/css/**/*.{sass,css}', 'src/html/**/*.html'],
+      tasks: ['copy', 'sass', 'cssmin', 'htmlmin', 'concat', 'uglify', 'replace']
     }
 
   });
 
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default', ['sass', 'htmlmin', 'concat', 'uglify', 'replace', 'watch']);
+  grunt.registerTask('default', ['copy', 'sass', 'cssmin', 'htmlmin', 'concat', 'uglify', 'replace', 'watch']);
 
 };

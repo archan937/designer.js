@@ -167,6 +167,10 @@ mod.define('Elements', function() {
         return this.style;
       },
 
+      computedStyle: function() {
+        return computed.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
+      },
+
       attr: function() {
         var key = arguments[0], value = arguments[1], attr;
         if (arguments.length == 1) {
@@ -201,15 +205,62 @@ mod.define('Elements', function() {
         }
       },
 
-      appendTo: function(parent) {
+      prev: function(selector) {
+        var prev = $(this.previousElementSibling);
+        if (selector && !prev.is(selector)) {
+          return prev.prev(selector);
+        } else {
+          return prev;
+        }
+      },
+
+      next: function(selector) {
+        var next = $(this.nextElementSibling);
+        if (selector && !next.is(selector)) {
+          return next.next(selector);
+        } else {
+          return next;
+        }
+      },
+
+      backward: function(selector) {
+        var el = $(this).prev(selector);
+        if (el.length) {
+          this.parentNode.insertBefore(this, el.at(0));
+        }
+      },
+
+      forward: function(selector) {
+        var el = $(this).next(selector);
+        if (el.length) {
+          next = el.at(0).nextElementSibling;
+          next ? this.parentNode.insertBefore(this, next) : this.parentNode.appendChild(this);
+        }
+      },
+
+      prepend: function(child) {
+        $(child).each(function(i, node) {
+          var first = this.children[0];
+          first ? this.insertBefore(node, first) : this.appendChild(node);
+        }.bind(this));
+      },
+
+      prependTo: function(parent) {
         $(parent).each(function(i, node) {
-          node.appendChild(this);
+          var first = node.children[0];
+          first ? node.insertBefore(this, first) : node.appendChild(this);
         }.bind(this));
       },
 
       append: function(child) {
         $(child).each(function(i, node) {
           this.appendChild(node);
+        }.bind(this));
+      },
+
+      appendTo: function(parent) {
+        $(parent).each(function(i, node) {
+          node.appendChild(this);
         }.bind(this));
       },
 
@@ -232,7 +283,7 @@ mod.define('Elements', function() {
     },
 
   newElement = function(html) {
-    if ((typeof(html) == 'string') && html.match(/^\<(\w+).+\<\/\1\>$/)) {
+    if ((typeof(html) == 'string') && html.match(/^\<(\w+).+\<\/\1\>$/m)) {
       var el = document.createElement('div');
       el.innerHTML = html;
       return wrap(el.childNodes[0]);

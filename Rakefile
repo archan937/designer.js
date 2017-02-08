@@ -9,7 +9,7 @@ task :release, :version do |task, args|
   end
 
   timestamp  = Time.now
-  javascript = File.open("src/#{LIBRARY}.js").readlines.collect do |line|
+  javascript = File.open("build/js/#{LIBRARY}.js").readlines.collect do |line|
     line = line.gsub(/\{(version|year|date)\}/) do |matched|
       case matched
       when "{version}"
@@ -43,15 +43,15 @@ task :release, :version do |task, args|
   File.open("VERSION", "w").puts(args[:version])
 
   # Correct demo pages
-  `sed -i -- 's/src\\/#{LIBRARY}/#{LIBRARY}\\.min/g' #{release_dir}/demo/*.html`
+  `sed -i -- 's/build\\/js\\/#{LIBRARY}/#{LIBRARY}\\.min/g' #{release_dir}/demo/*.html`
   `rm #{release_dir}/demo/*.html--`
 
   # Compress release using YUI compressor
   `java -jar lib/yuicompressor-2.4.8.jar -v #{release_dir}/#{LIBRARY}.js -o #{release_dir}/#{LIBRARY}.min.js`
 end
 
-desc "Minify and gzip src/#{LIBRARY}.js"
+desc "Minify and gzip build/js/#{LIBRARY}.js"
 task :compress do |task, args|
-  `java -jar lib/yuicompressor-2.4.8.jar -v src/#{LIBRARY}.js -o src/#{LIBRARY}.min.js`
-  `gzip -9cf src/#{LIBRARY}.min.js > src/#{LIBRARY}.min.js.gz`
+  `java -jar lib/yuicompressor-2.4.8.jar -v build/js/#{LIBRARY}.js -o build/js/#{LIBRARY}.min.js`
+  `gzip -9cf build/js/#{LIBRARY}.min.js > build/gz/#{LIBRARY}.min.js.gz`
 end

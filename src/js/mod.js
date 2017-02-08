@@ -7,7 +7,7 @@ var mod = (function() {
     define: function(name, mod) {
       modules[name] = (typeof(mod) == 'function') ? mod : function() { return mod; };
     },
-    new: function(init) {
+    construct: function(init) {
       var body = [], i, mod, module, prop = '__prop__';
 
       for (i = 1; i < arguments.length; i++) {
@@ -33,4 +33,4 @@ var mod = (function() {
   };
 }());
 
-var define = mod.new;
+var define = mod.construct;
