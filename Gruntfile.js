@@ -18,6 +18,10 @@ module.exports = function(grunt) {
           cwd: 'src/fonts/ext',
           src: ['**'],
           dest: 'build/js/fonts'
+        }, {
+          expand: true,
+          src: 'src/js/ext/tidy.js',
+          dest: 'build/js/ext'
         }],
       },
     },
@@ -80,7 +84,7 @@ module.exports = function(grunt) {
     uglify: {
       dist: {
         files: {
-          'build/js/ext/beautify-html.min.js': ['src/js/ext/beautify-html.js']
+          // 'build/js/ext/beautify-html.min.js': ['src/js/ext/beautify-html.js']
         }
       }
     },
@@ -95,9 +99,9 @@ module.exports = function(grunt) {
         }],
         options: {
           patterns: [{
-            match: 'beautifyHtmlJS',
+            match: 'tidyJS',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/js/ext/beautify-html.min.js'));
+              return util.inspect(grunt.file.read('build/js/ext/tidy.js'));
             }
           }, {
             match: 'fontAwesomeCSS',

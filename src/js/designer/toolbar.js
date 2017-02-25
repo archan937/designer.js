@@ -26,6 +26,29 @@ mod.define('Designer.Toolbar', function() {
     el().hide();
   },
 
+  getHTML = function() {
+    var
+      doc = document.implementation.createHTMLDocument(),
+      html = $(doc.body.parentNode),
+      options = {
+        'tidy-mark': false,
+        'hide-comments': true,
+        'clean': true,
+        'css-prefix': 'el',
+        'indent': true,
+        'indent-spaces': 2,
+        'quiet': true,
+        'show-warnings': true
+      };
+
+    Elements.deselectElement();
+    html.html(document.body.parentNode.innerHTML);
+    html.find('[id^=ds-]').remove();
+    html.find('.ds-el').removeClass(/^ds-/).removeAttr(/^ds-/);
+
+    return tidy_html5(html.html(), options);
+  },
+
   bind = function() {
     el().on('a', 'click', function(e, target) {
       var
@@ -48,17 +71,13 @@ mod.define('Designer.Toolbar', function() {
           e.stopPropagation();
           break;
         case 'code':
-          Elements.deselectElement();
-          html = $('<div>' + $('body').html() + '</div>');
-          // html.find('#ds-shadow-dom').remove();
-          // html.find('.ds-*').css({background: 'red'});
-          // alert(html.html());
+          alert(getHTML());
           break;
       }
 
-      if (li.hasClass('move')) {
-        // move toolbar
-      }
+      // if (li.hasClass('move')) {
+      //   // move toolbar
+      // }
     });
   };
 

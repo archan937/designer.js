@@ -12,14 +12,15 @@ if (typeof(Designer) == 'undefined') {
 
 Designer = define(function() {
 
-  registerJS(@@beautifyHtmlJS);
+  registerJS(@@tidyJS, 'ds-js-tidy');
   registerCSS(@@fontAwesomeCSS, 'ds-css-fontawesome');
   registerCSS(@@toolbarCSS, 'ds-css-toolbar');
-  registerCSS(@@elementsCSS, 'ds-css-elements');
+  registerCSS(@@elementsCSS, 'ds-css-designer');
   registerHTML(@@toolbarHTML);
   registerConfig(Toolbar.config);
 
   ready(function() {
+    $(script.el).attr('id', 'ds-js-designer');
     injectCode();
     configure();
     Draggable.ready();
