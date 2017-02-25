@@ -5,7 +5,6 @@ mod.define('Designer.Elements', function() {
   selectedClass = 'ds-selected',
   transparentClass = 'ds-transparent',
   wrapperClass = 'ds-el-wrapper',
-
   emptyAttribute = 'ds-empty',
 
   elSelector = '.' + elClass,

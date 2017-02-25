@@ -69,36 +69,30 @@ mod.define('Elements', function() {
         }
       },
 
-      addClass: function(arg) {
-        var classes = arg.split(' '), i, name;
-        for (i = 0; i < classes.length; i += 1) {
-          name = classes[i];
-          if (name.length && (indexOf(name, this.classList) == -1)) {
-            this.classList.add(name);
-          }
-        }
+      addClass: function() {
+        var classes = (arguments[0] instanceof Array) ? arguments[0] : arguments;
+        this.classList.add.apply(this.classList, classes);
       },
 
-      removeClass: function(arg) {
-        var classes = arg.split(' '), i, name;
-        for (i = 0; i < classes.length; i += 1) {
-          name = classes[i];
-          if (name.length) {
-            this.classList.remove(name);
+      removeClass: function() {
+        var classes = [], i, name, regexp;
+
+        if (arguments[0] instanceof RegExp) {
+          regexp = arguments[0];
+          for (i = 0; i < this.classList.length; i += 1) {
+            name = this.classList[i];
+            if (name.match(regexp))
+              classes.push(name);
           }
+        } else {
+          classes = (arguments[0] instanceof Array) ? arguments[0] : arguments;
         }
-        if (!this.classList.length) {
-          this.removeAttribute('class');
-        }
+
+        this.classList.remove.apply(this.classList, classes);
       },
 
       hasClass: function(arg) {
-        for (var i = 0; i < this.classList.length; i += 1) {
-          if (this.classList[i].toLowerCase() == arg.toLowerCase()) {
-            return true;
-          }
-        }
-        return false;
+        return this.classList.contains(arg);
       },
 
       innerWrap: function(tag, attributes) {
@@ -187,7 +181,18 @@ mod.define('Elements', function() {
       },
 
       removeAttr: function(attr) {
-        this.removeAttribute(attr);
+        var regexp, i;
+
+        if (attr instanceof RegExp) {
+          regexp = attr;
+          for (i = 0; i < this.attributes.length; i += 1) {
+            attr = this.attributes[i].localName;
+            if (attr.match(regexp))
+              this.removeAttribute(attr);
+          }
+        } else {
+          this.removeAttribute(attr);
+        }
       },
 
       css: function() {
