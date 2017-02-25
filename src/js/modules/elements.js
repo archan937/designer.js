@@ -315,7 +315,15 @@ mod.define('Elements', function() {
         found = found.concat($(array.join(' '), parents[i]));
       }
     } else {
-      found = context[fn] ? context[fn](s) : context.querySelectorAll(s);
+      if (context[fn])
+        found = context[fn](s);
+      else {
+        if (f == 'ById') {
+          f = null;
+          s = '[id="' + s + '"]';
+        }
+        found = context.querySelectorAll(s);
+      }
       if (f == 'ById') {
         found = [found];
       } else {
@@ -379,7 +387,7 @@ mod.define('Elements', function() {
         if (result && result.nodeType) {
           results.push(result);
         } else if (result && result.at) {
-          results = results.concat(result);
+          results = results.concat(Array.prototype.slice.call(result));
         } else {
           return result;
         }
