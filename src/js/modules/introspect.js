@@ -20,6 +20,7 @@ mod.define('Introspect', function() {
       }
 
       return {
+        el: script,
         path: src.toLowerCase().replace(/[^\/]+\.js.*/, ''),
         params: params
       };
