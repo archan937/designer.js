@@ -36,6 +36,7 @@ Designer = define(function() {
   };
 
 },
+  'Identifier',
   'Utils',
   'Introspect',
   'Collections',

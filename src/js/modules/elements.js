@@ -7,9 +7,9 @@ mod.define('Elements', function() {
       },
 
       children: function() {
-        var children = [];
+        var children = [], i;
         children.at = true;
-        for (var i = 0; i < this.childNodes.length; i++) {
+        for (i = 0; i < this.childNodes.length; i++) {
           node = this.childNodes[i];
           if (node instanceof HTMLElement) {
             children.push(node);
@@ -19,7 +19,7 @@ mod.define('Elements', function() {
       },
 
       parent: function() {
-        return this.parentNode;
+        return wrap(this.parentNode);
       },
 
       closest: function(sel, elements, context) {
@@ -70,8 +70,9 @@ mod.define('Elements', function() {
       },
 
       addClass: function() {
-        var classes = (arguments[0] instanceof Array) ? arguments[0] : arguments;
-        this.classList.add.apply(this.classList, classes);
+        var classes = ((arguments[0] instanceof Array) ? arguments[0] : arguments);
+        classes = Array.prototype.join.call(classes, " ");
+        this.classList.add.apply(this.classList, classes.trim().split(/\s+/));
       },
 
       removeClass: function() {
@@ -110,7 +111,7 @@ mod.define('Elements', function() {
         }
         this.parentNode.insertBefore(outerEl, this);
         outerEl.appendChild(this);
-        return outerEl;
+        return wrap(outerEl);
       },
 
       focus: function() {
@@ -123,6 +124,10 @@ mod.define('Elements', function() {
 
       unbind: function() {
         unbind.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
+      },
+
+      once: function() {
+        once.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
       },
 
       on: function() {
@@ -269,9 +274,27 @@ mod.define('Elements', function() {
         }.bind(this));
       },
 
+      before: function(el) {
+        $(el).each(function(index, el) {
+          this.parentNode.insertBefore(el, this);
+        }.bind(this));
+      },
+
+      after: function(el) {
+        $(el).each(function(index, el) {
+          var next = this.nextElementSibling;
+          if (next) {
+            $(next).before(el);
+          } else {
+            this.parentNode.appendChild(el);
+          }
+        }.bind(this));
+      },
+
       toShadowDom: function(id) {
-        if (document.body.createShadowRoot) {
-          var body = document.body, el = $('#' + id)[0];
+        var body = document.body, el;
+        if (body.createShadowRoot) {
+          el = $('#' + id)[0];
           if (!el) {
             el = document.createElement('div');
             el.id = id;
@@ -288,7 +311,7 @@ mod.define('Elements', function() {
     },
 
   newElement = function(html) {
-    if ((typeof(html) == 'string') && html.match(/^\<(\w+).+\<\/\1\>$/m)) {
+    if ((typeof(html) == 'string') && html.match(/^\<(\w+)(.+\<\/\1)?\>$/m)) {
       var el = document.createElement('div');
       el.innerHTML = html;
       return wrap(el.childNodes[0]);

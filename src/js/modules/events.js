@@ -1,25 +1,31 @@
 mod.define('Events', function() {
+  var
+    events = {};
+
   return {
     bind: function(el, type, f, remove) {
-      fn = function(e) {
-        f(e, e.target || e.srcElement || window.event.target || window.event.srcElement);
-      };
+      var fn, id;
 
-      var tf = type + fn;
-
-      if (el && (el.attachEvent ? (remove ? el.detachEvent('on' + type, el[tf]) : 1) : (remove ? el.removeEventListener(type, fn, 0) : el.addEventListener(type, fn, 0)))) {
-        el['e' + tf] = fn;
-        el[tf] = function() { el['e' + tf](window.event); };
-        el.attachEvent('on' + type, el[tf]);
+      if (typeof(f) == 'string') {
+        fn = events[f];
+      } else {
+        id = objectid(el) + ':' + type + ':' + objectid(f);
+        fn = events[id] || (events[id] = function(e) {
+          e || (e = window.event);
+          f(e, e.target || e.srcElement || window.event.target || window.event.srcElement);
+        });
       }
 
-      el._events || (el._events = {});
-      el._events[type] || (el._events[type] = []);
-
       if (remove) {
-        el._events[type].splice(indexOf(fn, el._events[type]), 1);
+        if (el.detachEvent)
+          el.detachEvent('on' + type, fn);
+        else
+          el.removeEventListener(type, fn, false);
       } else {
-        el._events[type].push(fn);
+        if (el.attachEvent)
+          el.attachEvent('on' + type, fn);
+        else
+          el.addEventListener(type, fn, false);
       }
     },
 
@@ -27,11 +33,21 @@ mod.define('Events', function() {
       if (fn) {
         bind(el, type, fn, true);
       } else {
-        var fns = (el._events || {})[type] || [], i;
-        for (i = 0; i < fns.length; i++) {
-          unbind(el, type, fns[i]);
+        var regexp = new RegExp('^' + objectid(el) + ':' + type), prop;
+        for (prop in events) {
+          if (events.hasOwnProperty(prop) && prop.match(regexp)) {
+            unbind(el, type, prop);
+          }
         }
       }
+    },
+
+    once: function(el, type, f) {
+      var fn = function() {
+        unbind(el, type, fn);
+        f.apply(this, arguments);
+      };
+      bind(el, type, fn);
     },
 
     on: function(sel, type, fn, context) {
