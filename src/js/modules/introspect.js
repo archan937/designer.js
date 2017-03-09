@@ -78,7 +78,7 @@ mod.define('Introspect', function() {
       return bounds;
     },
 
-    computed: function(el) {
+    computedStyle: function(el) {
       return window.getComputedStyle(el);
     },
 
