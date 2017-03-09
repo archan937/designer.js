@@ -46,7 +46,7 @@ mod.define('Elements', function() {
       },
 
       is: function(sel) {
-        return indexOf(this, $(sel)) != -1;
+        return this.matches(sel);
       },
 
       html: function(val) {
