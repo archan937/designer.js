@@ -17,10 +17,11 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'src/fonts/ext',
           src: ['**'],
-          dest: 'build/js/fonts'
+          dest: 'build/css/ext/fonts'
         }, {
           expand: true,
-          src: 'src/js/ext/tidy.js',
+          cwd: 'src/js/ext',
+          src: ['**'],
           dest: 'build/js/ext'
         }],
       },
@@ -54,6 +55,14 @@ module.exports = function(grunt) {
       }
     },
 
+    embedFonts: {
+      all: {
+        files: {
+          'build/css/ext/font-awesome.min.css': ['build/css/ext/font-awesome.min.css']
+        }
+      }
+    },
+
     htmlmin: {
       dist: {
         options: {
@@ -81,14 +90,6 @@ module.exports = function(grunt) {
       }
     },
 
-    uglify: {
-      dist: {
-        files: {
-          // 'build/js/ext/beautify-html.min.js': ['src/js/ext/beautify-html.js']
-        }
-      }
-    },
-
     replace: {
       dist: {
         files: [{
@@ -106,7 +107,12 @@ module.exports = function(grunt) {
           }, {
             match: 'fontAwesomeCSS',
             replacement: function() {
-              return util.inspect(grunt.file.read('build/css/ext/font-awesome.min.css'));
+              return util.inspect(grunt.file.read('build/css/ext/font-awesome.min.css').replace(/(src:|,)url\(\.\/fonts\/.*?\);/g, ''));
+            }
+          }, {
+            match: 'iframeCSS',
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/css/designer/iframe.min.css'));
             }
           }, {
             match: 'elementsCSS',
@@ -130,7 +136,7 @@ module.exports = function(grunt) {
 
     watch: {
       files: ['Gruntfile.js', 'src/js/**/*.js', 'src/css/**/*.{sass,css}', 'src/html/**/*.html'],
-      tasks: ['copy', 'sass', 'cssmin', 'htmlmin', 'concat', 'uglify', 'replace']
+      tasks: ['copy', 'sass', 'cssmin', 'embedFonts', 'htmlmin', 'concat', 'replace']
     }
 
   });
@@ -138,11 +144,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-embed-fonts');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default', ['copy', 'sass', 'cssmin', 'htmlmin', 'concat', 'uglify', 'replace', 'watch']);
+  grunt.registerTask('default', ['copy', 'sass', 'cssmin', 'embedFonts', 'htmlmin', 'concat', 'replace', 'watch']);
 
 };

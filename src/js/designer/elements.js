@@ -273,15 +273,12 @@ mod.define('Designer.Elements', function() {
 
   return {
     Elements: {
-
       addElement: addElement,
       deselectElement: deselectElement,
       editBackground: editBackground,
-
       ready: function() {
         bind();
       }
-
     }
   };
 });

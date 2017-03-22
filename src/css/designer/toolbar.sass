@@ -1,57 +1,37 @@
+@import ../variables
 @import ../mixins
 
 #ds-toolbar
-  top: 15px
-  right: 15px
+  top: 0
+  left: 0
+  width: $toolbar-width
+  height: 100%
+  list-style: none
   position: fixed
-  display: none
-  z-index: 99999
   +disable-text-selection
+  background: #404040
 
-  *
+  &, & *
     margin: 0
     padding: 0
-    list-style: none
     outline: 0
 
-  ul
-    display: none
-    background: #404040
-    border: 1px solid #000
-    +box-shadow(rgba(0, 0, 0, 0.5), 0, 1px, 2px)
+  li
+    display: block
+    border-bottom: 1px solid #393939
 
-    &.active
-      display: block
-
-    li
-      width: 40px
-      padding: 3px 0 4px
-      *padding: 3px 0 4px
-      line-height: 1.5
+    a
+      width: $toolbar-width
+      line-height: $toolbar-width
       color: #EEE
+      display: block
       font-size: 15px
-      letter-spacing: -0.35px
       text-align: center
-      border-left: 1px solid #393939
-      +inline-block
+      text-decoration: none
+      &:hover
+        cursor: pointer
 
-      &:first-child
-        border: 0
-        *border: 0
-
-      &[data-type="text"]
+    &[data-type="text"]
+      a
         font-family: Times New Roman
         font-size: 19px
-        line-height: 1
-        a
-          position: absolute
-          top: 6px
-          left: 15px
-
-      &.move
-        width: 18px
-
-      a
-        text-decoration: none
-        &:hover
-          cursor: pointer

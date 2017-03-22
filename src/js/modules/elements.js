@@ -170,6 +170,10 @@ mod.define('Elements', function() {
         return computedStyle.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
       },
 
+      cssRules: function() {
+        return cssRules.apply(window, [this].concat(Array.prototype.slice.call(arguments)));
+      },
+
       attr: function() {
         var key = arguments[0], value = arguments[1], attr;
         if (arguments.length == 1) {

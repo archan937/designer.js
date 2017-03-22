@@ -10,29 +10,78 @@ if (typeof(Designer) == 'undefined') {
 // * $Date: {date} $
 // *
 
-Designer = define(function() {
+Designer = define('designer.js', function() {
 
-  registerJS(@@tidyJS, 'ds-js-tidy');
-  registerCSS(@@fontAwesomeCSS, 'ds-css-fontawesome');
-  registerCSS(@@toolbarCSS, 'ds-css-toolbar');
-  registerCSS(@@elementsCSS, 'ds-css-designer');
-  registerHTML(@@toolbarHTML);
-  registerConfig(Toolbar.config);
+  var
+    init = function(url) {
+      ready(function() {
+        registerCSS(@@fontAwesomeCSS, 'ds-font-awesome');
+        registerCSS(@@iframeCSS, 'ds-iframe');
+        registerCSS(@@toolbarCSS, 'ds-toolbar');
+        registerHTML(@@toolbarHTML);
+        injectCode();
+        Iframe.init(url);
+        Toolbar.ready();
+      });
+    },
+
+    edit = function() {
+      ready(function() {
+        registerJS(@@tidyJS, 'ds-tidy');
+        registerCSS(@@elementsCSS, 'ds-elements');
+        injectCode();
+        Draggable.ready();
+        Elements.ready();
+      });
+    },
+
+    backward = function() {
+      $('.ds-selected').backward('.ds-el');
+    },
+
+    forward = function() {
+      $('.ds-selected').forward('.ds-el');
+    },
+
+    getHTML = function() {
+      var
+        doc = document.implementation.createHTMLDocument(),
+        html = $(doc.body.parentNode),
+        options = {
+          'tidy-mark': false,
+          'hide-comments': true,
+          'clean': true,
+          'css-prefix': 'el',
+          'indent': true,
+          'indent-spaces': 2,
+          'quiet': true,
+          'show-warnings': true
+        };
+      Elements.deselectElement();
+      html.html(document.body.parentNode.innerHTML);
+      html.find('[id="designer.js"]').remove();
+      html.find('[id^=ds-]').remove();
+      html.find('.ds-el').removeClass(/^ds-/).removeAttr(/^ds-/);
+      return tidy_html5(html.html(), options);
+    };
 
   ready(function() {
-    $(script.el).attr('id', 'ds-js-designer');
-    injectCode();
+    registerConfig({
+      init: init,
+      edit: edit
+    });
     configure();
-    Draggable.ready();
-    Elements.ready();
-    Toolbar.ready();
   });
 
   return {
     version: '{version}',
     $: $,
-    show: Toolbar.show,
-    hide: Toolbar.hide
+    init: init,
+    addElement: Elements.addElement,
+    editBackground: Elements.editBackground,
+    backward: backward,
+    forward: forward,
+    getHTML: getHTML
   };
 
 },
@@ -45,6 +94,7 @@ Designer = define(function() {
   'Draggable',
   'Inject',
   'Config',
+  'Designer.Iframe',
   'Designer.Toolbar',
   'Designer.Elements'
 );
