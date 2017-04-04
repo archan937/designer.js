@@ -15,13 +15,16 @@ Designer = define('designer.js', function() {
   var
     init = function(url) {
       ready(function() {
-        registerCSS(@@fontAwesomeCSS, 'ds-font-awesome');
-        registerCSS(@@iframeCSS, 'ds-iframe');
-        registerCSS(@@toolbarCSS, 'ds-toolbar');
+        registerCSS(@@fontAwesomeCSS);
+        registerCSS(@@iframeCSS);
+        registerCSS(@@toolbarCSS);
+        registerCSS(@@editorCSS);
         registerHTML(@@toolbarHTML);
+        registerHTML(@@editorHTML);
         injectCode();
         Iframe.init(url);
         Toolbar.ready();
+        Editor.ready();
       });
     },
 
@@ -30,7 +33,6 @@ Designer = define('designer.js', function() {
         registerJS(@@tidyJS, 'ds-tidy');
         registerCSS(@@elementsCSS, 'ds-elements');
         injectCode();
-        Draggable.ready();
         Elements.ready();
       });
     },
@@ -96,6 +98,7 @@ Designer = define('designer.js', function() {
   'Config',
   'Designer.Iframe',
   'Designer.Toolbar',
+  'Designer.Editor',
   'Designer.Elements'
 );
 

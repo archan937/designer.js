@@ -25,6 +25,14 @@ mod.define('Draggable', function() {
   },
 
   bind = function() {
+    var removeSelection = function() {
+      if (document.selection) {
+        document.selection.empty()
+      } else {
+          window.getSelection().removeAllRanges()
+      }
+    };
+
     $('body').bind('mousedown', function(e, target) {
       if (!dragged && (e.which == 1) && (indexOf(target, elements) != -1)) {
         var config;
@@ -79,16 +87,12 @@ mod.define('Draggable', function() {
     return (typeof(val) == 'function') ? val(el) : val;
   };
 
+  ready(bind);
+
   return {
     Draggable: {
-
       init: init,
-      stop: stop,
-
-      ready: function() {
-        bind();
-      }
-
+      stop: stop
     }
   };
 });

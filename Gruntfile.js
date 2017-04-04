@@ -70,7 +70,8 @@ module.exports = function(grunt) {
           collapseWhitespace: true
         },
         files: {
-          'build/html/designer/toolbar.min.html': 'src/html/designer/toolbar.html'
+          'build/html/designer/toolbar.min.html': 'src/html/designer/toolbar.html',
+          'build/html/designer/editor.min.html': 'src/html/designer/editor.html'
         }
       }
     },
@@ -125,9 +126,19 @@ module.exports = function(grunt) {
               return util.inspect(grunt.file.read('build/css/designer/toolbar.min.css'));
             }
           }, {
+            match: 'editorCSS',
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/css/designer/editor.min.css'));
+            }
+          }, {
             match: 'toolbarHTML',
             replacement: function() {
               return util.inspect(grunt.file.read('build/html/designer/toolbar.min.html'));
+            }
+          }, {
+            match: 'editorHTML',
+            replacement: function() {
+              return util.inspect(grunt.file.read('build/html/designer/editor.min.html'));
             }
           }]
         }

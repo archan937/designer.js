@@ -65,7 +65,7 @@ mod.define('Inject', function() {
       }
 
       css.push('\n' + selector + ' {');
-      for(attr in style) {
+      for (attr in style) {
         css.push('  ' + attr + ': ' + style[attr] + ';');
       };
       css.push('}');
