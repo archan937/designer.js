@@ -20,12 +20,6 @@ mod.define('Designer.Iframe', function() {
     iframe.bind('load', function() {
       if (iframeWindow.location.href.indexOf(timestamp) != -1) {
         iframeDocument = iframeWindow.document;
-        // document.title = iframeDocument.title;
-        //
-        // history.pushState({
-        //   title: iframeDocument.title,
-        //   path: iframeWindow.location.pathname
-        // }, iframeDocument.title, iframeWindow.location.href.replace(timestamp, ''));
 
         var el = iframeDocument.createElement('script');
         el.id = 'designer.js';

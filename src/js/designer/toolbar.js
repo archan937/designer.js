@@ -1,7 +1,7 @@
 mod.define('Designer.Toolbar', function() {
   var
 
-  bind = function() {
+  init = function() {
     $('#ds-toolbar').on('a', 'click', function(e, target) {
 
       var
@@ -16,14 +16,14 @@ mod.define('Designer.Toolbar', function() {
         case 'text': case 'image':
           Designer.addElement(type);
           break;
-        case 'background':
-          Designer.editBackground();
-          break;
         case 'backward':
           Designer.backward();
           break;
         case 'forward':
           Designer.forward();
+          break;
+        case 'page':
+          Designer.editPage();
           break;
         case 'html':
           alert(Designer.getHTML());
@@ -35,9 +35,7 @@ mod.define('Designer.Toolbar', function() {
 
   return {
     Toolbar: {
-      ready: function() {
-        bind();
-      }
+      init: init
     }
   };
 });

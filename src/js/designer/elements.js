@@ -81,6 +81,8 @@ mod.define('Designer.Elements', function() {
           vwPosition(element);
         }
       }
+
+      element.removeAttr('data-text');
     });
 
     $(wrapperSelector).each(function() {
@@ -232,11 +234,11 @@ mod.define('Designer.Elements', function() {
     alert('Edit image');
   },
 
-  editBackground = function() {
-    alert('Edit background');
+  editPage = function() {
+    alert('Edit page');
   },
 
-  bind = function() {
+  init = function() {
     var pos;
 
     $('body').bind('mousedown', function(e, target) {
@@ -275,10 +277,8 @@ mod.define('Designer.Elements', function() {
     Elements: {
       addElement: addElement,
       deselectElement: deselectElement,
-      editBackground: editBackground,
-      ready: function() {
-        bind();
-      }
+      editPage: editPage,
+      init: init
     }
   };
 });

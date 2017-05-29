@@ -18,13 +18,10 @@ Designer = define('designer.js', function() {
         registerCSS(@@fontAwesomeCSS);
         registerCSS(@@iframeCSS);
         registerCSS(@@toolbarCSS);
-        registerCSS(@@editorCSS);
         registerHTML(@@toolbarHTML);
-        registerHTML(@@editorHTML);
         injectCode();
         Iframe.init(url);
-        Toolbar.ready();
-        Editor.ready();
+        Toolbar.init();
       });
     },
 
@@ -32,7 +29,7 @@ Designer = define('designer.js', function() {
       ready(function() {
         registerCSS(@@elementsCSS, 'ds-elements');
         injectCode();
-        Elements.ready();
+        Elements.init();
       });
     },
 
@@ -70,9 +67,9 @@ Designer = define('designer.js', function() {
     $: $,
     init: init,
     addElement: Elements.addElement,
-    editBackground: Elements.editBackground,
     backward: backward,
     forward: forward,
+    editPage: Elements.editPage,
     getHTML: getHTML
   };
 
@@ -88,7 +85,6 @@ Designer = define('designer.js', function() {
   'Config',
   'Designer.Iframe',
   'Designer.Toolbar',
-  'Designer.Editor',
   'Designer.Elements'
 );
 
