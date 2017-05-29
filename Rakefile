@@ -48,10 +48,5 @@ task :release, :version do |task, args|
 
   # Compress release using YUI compressor
   `java -jar lib/yuicompressor-2.4.8.jar -v #{release_dir}/#{LIBRARY}.js -o #{release_dir}/#{LIBRARY}.min.js`
-end
-
-desc "Minify and gzip build/js/#{LIBRARY}.js"
-task :compress do |task, args|
-  `java -jar lib/yuicompressor-2.4.8.jar -v build/js/#{LIBRARY}.js -o build/js/#{LIBRARY}.min.js`
-  `gzip -9cf build/js/#{LIBRARY}.min.js > build/gz/#{LIBRARY}.min.js.gz`
+  `gzip -9cf #{release_dir}/#{LIBRARY}.min.js > #{release_dir}/#{LIBRARY}.min.js.gz`
 end
