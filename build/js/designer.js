@@ -1496,23 +1496,14 @@ Designer = define('designer.js', function() {
     getHTML = function() {
       var
         doc = document.implementation.createHTMLDocument(),
-        html = $(doc.body.parentNode),
-        options = {
-          'tidy-mark': false,
-          'hide-comments': true,
-          'clean': true,
-          'css-prefix': 'el',
-          'indent': true,
-          'indent-spaces': 2,
-          'quiet': true,
-          'show-warnings': true
-        };
+        html = $(doc.body.parentNode);
       Elements.deselectElement();
       html.html(document.body.parentNode.innerHTML);
       html.find('[id="designer.js"]').remove();
       html.find('[id^=ds-]').remove();
+      html.find('[id^=am-]').remove();
       html.find('.ds-el').removeClass(/^ds-/).removeAttr(/^ds-/);
-      return tidy_html5(html.html(), options);
+      return html.html();
     };
 
   ready(function() {

@@ -101,11 +101,6 @@ module.exports = function(grunt) {
         }],
         options: {
           patterns: [{
-            match: 'tidyJS',
-            replacement: function() {
-              return util.inspect(grunt.file.read('build/js/ext/tidy.js'));
-            }
-          }, {
             match: 'fontAwesomeCSS',
             replacement: function() {
               return util.inspect(grunt.file.read('build/css/ext/font-awesome.min.css').replace(/(src:|,)url\(\.\/fonts\/.*?\);/g, ''));
