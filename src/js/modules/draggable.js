@@ -27,9 +27,9 @@ mod.define('Draggable', function() {
   bind = function() {
     var removeSelection = function() {
       if (document.selection) {
-        document.selection.empty()
+        document.selection.empty();
       } else {
-          window.getSelection().removeAllRanges()
+        window.getSelection().removeAllRanges();
       }
     };
 
@@ -50,6 +50,8 @@ mod.define('Draggable', function() {
 
     $('body').bind('mousemove', function(e) {
       if (dragged) {
+        removeSelection();
+
         var
           parent = (dragged.parent().at(0).tagName.toLowerCase() != 'body') ? dragged.parent() : null,
           parentX = parent ? parent.bounds().left : 0,
