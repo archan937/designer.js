@@ -208,7 +208,7 @@ mod.define('Elements', function() {
         var key = arguments[0], value = arguments[1], prop;
         if (arguments.length == 1) {
           if (typeof(key) == 'string') {
-            return computed.apply(window, [this].concat(Array.prototype.slice.call(arguments)))[key];
+            return computedStyle.apply(window, [this].concat(Array.prototype.slice.call(arguments)))[key];
           } else {
             for (prop in key) {
               this.style[prop] = key[prop];
