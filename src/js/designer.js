@@ -25,6 +25,10 @@ Designer = define('designer.js', function() {
       });
     },
 
+    load = function(url) {
+      Iframe.load(url);
+    },
+
     edit = function() {
       ready(function() {
         registerCSS(@@elementsCSS, 'ds-elements');
@@ -66,6 +70,7 @@ Designer = define('designer.js', function() {
     version: '{version}',
     $: $,
     init: init,
+    load: load,
     addElement: Elements.addElement,
     backward: backward,
     forward: forward,

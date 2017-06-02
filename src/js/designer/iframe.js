@@ -4,18 +4,18 @@ mod.define('Designer.Iframe', function() {
   init = function(url) {
     url || (url = window.location.search.replace(/^\?/, ''));
 
-    if (!url) return;
+    if (url) {
+      $('<iframe>').addClass('designer').appendTo('body');
+      load(url);
+    }
+  },
 
+  load = function(url) {
     var
-      iframe = $('<iframe>'),
-      iframeWindow,
+      iframe = $('iframe'),
+      iframeWindow = iframe[0].contentWindow,
       iframeDocument,
       timestamp = (url.match(/\?\w+/) ? '&' : '?') + 't=' + (new Date()).getTime();
-
-    iframe.addClass('designer')
-          .appendTo('body');
-
-    iframeWindow = iframe[0].contentWindow;
 
     iframe.bind('load', function() {
       if (iframeWindow.location.href.indexOf(timestamp) != -1) {
@@ -38,7 +38,8 @@ mod.define('Designer.Iframe', function() {
 
   return {
     Iframe: {
-      init: init
+      init: init,
+      load: load
     }
   };
 });

@@ -1311,18 +1311,18 @@ mod.define('Designer.Iframe', function() {
   init = function(url) {
     url || (url = window.location.search.replace(/^\?/, ''));
 
-    if (!url) return;
+    if (url) {
+      $('<iframe>').addClass('designer').appendTo('body');
+      load(url);
+    }
+  },
 
+  load = function(url) {
     var
-      iframe = $('<iframe>'),
-      iframeWindow,
+      iframe = $('iframe'),
+      iframeWindow = iframe[0].contentWindow,
       iframeDocument,
       timestamp = (url.match(/\?\w+/) ? '&' : '?') + 't=' + (new Date()).getTime();
-
-    iframe.addClass('designer')
-          .appendTo('body');
-
-    iframeWindow = iframe[0].contentWindow;
 
     iframe.bind('load', function() {
       if (iframeWindow.location.href.indexOf(timestamp) != -1) {
@@ -1345,7 +1345,8 @@ mod.define('Designer.Iframe', function() {
 
   return {
     Iframe: {
-      init: init
+      init: init,
+      load: load
     }
   };
 });
@@ -1419,6 +1420,10 @@ Designer = define('designer.js', function() {
       });
     },
 
+    load = function(url) {
+      Iframe.load(url);
+    },
+
     edit = function() {
       ready(function() {
         registerCSS('html{height:100%}body{min-height:100%}*[contenteditable]:empty{width:2px;display:block}*[contenteditable]{-webkit-user-select:auto !important;display:inline-block}*[contenteditable] .ds-resize-handle{display:none}.ds-el{padding:3px 5px;cursor:default;display:inline-block;position:absolute;outline:none;border:1px solid transparent;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ds-el.ds-selected{padding:3px 5px;border-color:#4183C4}.ds-el.ds-selected .ds-resize-tl{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;top:-4px;left:-4px}.ds-el.ds-selected .ds-resize-tm{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;top:-4px;left:calc(50% - 4px)}.ds-el.ds-selected .ds-resize-tr{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;top:-4px;right:-4px}.ds-el.ds-selected .ds-resize-cl{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;top:calc(50% - 4px);left:-4px}.ds-el.ds-selected .ds-resize-cr{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;top:calc(50% - 4px);right:-4px}.ds-el.ds-selected .ds-resize-bl{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;bottom:-4px;left:-4px}.ds-el.ds-selected .ds-resize-bm{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;bottom:-4px;left:calc(50% - 4px)}.ds-el.ds-selected .ds-resize-br{width:5px;height:5px;position:absolute;background:#fff;border:1px solid #333;bottom:-4px;right:-4px}.ds-el.ds-transparent{opacity:0}.ds-el.ds-el-image.ds-selected{cursor:pointer}.ds-el-wrapper{width:100%;position:absolute;text-align:center}.ds-el-wrapper .ds-el{display:inline-block;position:static}\n', 'ds-elements');
@@ -1460,6 +1465,7 @@ Designer = define('designer.js', function() {
     version: '{version}',
     $: $,
     init: init,
+    load: load,
     addElement: Elements.addElement,
     backward: backward,
     forward: forward,
